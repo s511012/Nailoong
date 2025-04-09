@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Start Game</title>
+  <style>
+    body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #000;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+        }
+
+
+    /* 初始封面樣式 */
+    #start-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    #start-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        #start-title span {
+            font-size: 150px; /* 與圖片高度一致 */
+            font-weight: bold;
+            margin-right: 20px; /* 與圖片間隔 */
+            text-shadow: 0px 0px 10px #ff0000, 0px 0px 20px #00ff00, 0px 0px 30px #0000ff;
+        }
+        #start-title img {
+            height: 150px; /* 與文字高度一致 */
+        }
+
+    .start-container {
+      position: relative;
+      width: 150px;
+      height: 150px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Start Game 光線背景動畫 */
+    .start-container::before {
+      content: "";
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+      border-radius: 50%;
+      animation: pulse-light 2s infinite ease-in-out;
+      z-index: 0;
+    }
+
+    .start-container::after {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: conic-gradient(from 0deg, transparent, rgba(255,255,255,0.1), transparent 90%);
+      border-radius: 50%;
+      animation: rotate-light 6s linear infinite;
+      z-index: 0;
+    }
+
+    @keyframes pulse-light {
+      0%, 100% {
+        transform: scale(0.8);
+        opacity: 0.4;
+      }
+      50% {
+        transform: scale(1.2);
+        opacity: 1;
+      }
+    }
+
+    @keyframes rotate-light {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    #start-button {
+      height: 150px;
+      cursor: pointer;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* 主畫面樣式 */
+    .player {
+      position: absolute;
+    }
+
+    .marquee {
+      position: fixed;
+      top: 50%;
+      width: 100%;
+      white-space: nowrap;
+      font-size: 200px;
+      font-weight: bold;
+      text-transform: uppercase;
+      animation: scroll-left 10s linear infinite;
+      color: #fff;
+      text-shadow: 0px 0px 5px #ff0000, 0px 0px 10px #00ff00, 0px 0px 15px #0000ff;
+      display: none;
+      z-index: 0;
+    }
+
+    @keyframes scroll-left {
+      from {
+        transform: translateX(100%);
+      }
+      to {
+        transform: translateX(-100%);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 初始封面 -->
+  <div id="start-screen">
+    <div id="start-title">
+            <span>Welcome to</span>
+            <img src="https://images.steamusercontent.com/ugc/22062116235882717/18AC03A295BC695F9CB7294D33E02C23566D0FC1/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false" alt="Welcome to Image">
+        </div>
+    <div class="start-container">
+      <img id="start-button" src="https://static.wixstatic.com/media/e2b1e1_8ef0dd1c64eb4b3fbba6a7341aeee77c~mv2.gif" alt="Start Game">
+    </div>
+  </div>
+
+  <!-- 主畫面 -->
+  <div class="marquee">我是奶龍</div>
+
+  <script>
+    const videoId = "liRJpKj8pTc"; // YouTube影片ID
+    const numPlayers = 10;
+    const players = [];
+
+    function createPlayers() {
+      for (let i = 0; i < numPlayers; i++) {
+        const player = document.createElement("iframe");
+        player.className = "player";
+        player.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&controls=0&mute=1&vq=medium`;
+        player.frameBorder = "0";
+        player.allow = "autoplay; encrypted-media";
+        document.body.appendChild(player);
+        players.push(player);
+        randomizeSizeAndPosition(player);
+        setIndependentAnimation(player);
+      }
+    }
+
+    function randomizeSizeAndPosition(player) {
+      const width = Math.floor(Math.random() * (500 - 200 + 1)) + 200;
+      const height = Math.floor(width * 9 / 16);
+      player.style.width = `${width}px`;
+      player.style.height = `${height}px`;
+
+      const x = Math.random() * (window.innerWidth - width);
+      const y = Math.random() * (window.innerHeight - height);
+      player.style.transform = `translate(${x}px, ${y}px)`;
+    }
+
+    function setIndependentAnimation(player) {
+      const interval = Math.floor(Math.random() * 3000) + 2000;
+      setInterval(() => {
+        randomizeSizeAndPosition(player);
+      }, interval);
+    }
+
+    document.getElementById("start-button").addEventListener("click", async () => {
+      document.getElementById("start-screen").style.display = "none";
+      document.querySelector(".marquee").style.display = "block";
+      createPlayers();
+
+      const body = document.body;
+      if (body.requestFullscreen) {
+        await body.requestFullscreen();
+      } else if (body.webkitRequestFullscreen) {
+        await body.webkitRequestFullscreen();
+      } else if (body.msRequestFullscreen) {
+        await body.msRequestFullscreen();
+      }
+    });
+  </script>
+</body>
+</html>

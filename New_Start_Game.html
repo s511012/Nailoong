@@ -150,7 +150,7 @@
     </div>
   </div>
 
-  <div class="marquee">我是奶龍</div>
+  <div class="marquee">我是奶龍 我才是奶龍</div>
 
   <script>
     const videoId = "liRJpKj8pTc";
@@ -161,7 +161,7 @@
       for (let i = 0; i < numPlayers; i++) {
         const player = document.createElement("iframe");
         player.className = "player";
-        player.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&controls=0&mute=1&vq=medium`;
+        player.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&controls=0&mute=0&vq=medium`;
         player.frameBorder = "0";
         player.allow = "autoplay; encrypted-media";
         document.body.appendChild(player);

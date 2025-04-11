@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Start Game</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background-color: #000;
+      font-family: 'Arial', sans-serif;
+      color: #fff;
+    }
+
+    #start-screen {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background-color: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    #start-title {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    #start-title span {
+      font-size: 8vw;
+      font-weight: bold;
+      margin-right: 20px;
+      text-shadow: 0px 0px 10px #ff0000, 0px 0px 20px #00ff00, 0px 0px 30px #0000ff;
+    }
+
+    #start-title img {
+      height: 8vw;
+    }
+
+    .start-container {
+      position: relative;
+      width: 150px;
+      height: 150px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .start-container::before {
+      content: "";
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+      border-radius: 50%;
+      animation: pulse-light 2s infinite ease-in-out;
+      z-index: 0;
+    }
+
+    .start-container::after {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: conic-gradient(from 0deg, transparent, rgba(255,255,255,0.1), transparent 90%);
+      border-radius: 50%;
+      animation: rotate-light 6s linear infinite;
+      z-index: 0;
+    }
+
+    @keyframes pulse-light {
+      0%, 100% { transform: scale(0.8); opacity: 0.4; }
+      50% { transform: scale(1.2); opacity: 1; }
+    }
+
+    @keyframes rotate-light {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    #start-button {
+      height: 150px;
+      cursor: pointer;
+      position: relative;
+      z-index: 1;
+    }
+
+    .player {
+      position: absolute;
+    }
+
+    .marquee {
+      position: fixed;
+      top: 50%;
+      width: 100%;
+      white-space: nowrap;
+      font-size: 200px;
+      font-weight: bold;
+      text-transform: uppercase;
+      animation: scroll-left 10s linear infinite;
+      text-shadow: 0px 0px 5px #ff0000, 0px 0px 10px #00ff00, 0px 0px 15px #0000ff;
+      display: none;
+      z-index: 0;
+    }
+
+    @keyframes scroll-left {
+      from { transform: translateX(100%); }
+      to { transform: translateX(-100%); }
+    }
+
+    #random-button {
+      position: absolute;
+      background-color: gold;
+      color: #000;
+      border: none;
+      padding: 10px 20px;
+      font-weight: bold;
+      border-radius: 30px;
+      cursor: pointer;
+      display: none;
+      z-index: 10;
+    }
+
+    #popup-image {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      transition: transform 0.5s ease;
+      z-index: 999;
+      max-width: 60vw;
+      max-height: 60vh;
+    }
+
+    #popup-image.show {
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    #score-display {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      font-size: 24px;
+      font-weight: bold;
+      z-index: 20;
+    }
+
+    iframe {
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 開場 -->
+  <div id="start-screen">
+    <div id="start-title">
+      <span>Welcome to</span>
+      <img src="https://q0.itc.cn/q_70/images03/20241114/2be52013001e451d8e885fe8847ffde7.gif" alt="Logo">
+    </div>
+    <div class="start-container">
+      <img id="start-button" src="https://static.wixstatic.com/media/e2b1e1_8ef0dd1c64eb4b3fbba6a7341aeee77c~mv2.gif" alt="Start Game">
+    </div>
+  </div>
+
+  <div class="marquee">你們好啊 我是貝利亞🤬🤬🤬</div>
+
+  <div id="score-display">Score: 0</div>
+  <button id="random-button">點我！</button>
+  <img id="popup-image" src="https://shoutanhanhua.com/wp-content/uploads/2024/11/17-8.gif" alt="Popup Image">
+
+ <iframe
+  id="background-music" width="0" height="0"
+  src="https://www.youtube.com/embed/cVGK-owWHR8?autoplay=1&loop=1&playlist=cVGK-owWHR8"
+  allow="autoplay"
+  frameborder="0"
+></iframe>
+
+  <script>
+    const videoId = "ecdy5RdQZSM";
+    const numPlayers = 10;
+    let score = 0;
+
+    function createPlayers() {
+      for (let i = 0; i < numPlayers; i++) {
+        const player = document.createElement("iframe");
+        player.className = "player";
+        player.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&controls=0&mute=1&vq=medium`;
+        player.frameBorder = "0";
+        player.allow = "autoplay; encrypted-media";
+        player.style.aspectRatio = "9/16";
+        document.body.appendChild(player);
+        randomizeSizeAndPosition(player);
+        setIndependentAnimation(player);
+      }
+    }
+
+    function randomizeSizeAndPosition(player) {
+      const width = Math.floor(Math.random() * 200) + 150;
+      const height = Math.floor(width * 16 / 9);
+      player.style.width = `${width}px`;
+      player.style.height = `${height}px`;
+      const x = Math.random() * (window.innerWidth - width);
+      const y = Math.random() * (window.innerHeight - height);
+      player.style.transform = `translate(${x}px, ${y}px)`;
+    }
+
+    function setIndependentAnimation(player) {
+      const interval = Math.floor(Math.random() * 3000) + 2000;
+      setInterval(() => randomizeSizeAndPosition(player), interval);
+    }
+
+    const randomButton = document.getElementById("random-button");
+    const popupImage = document.getElementById("popup-image");
+    const scoreDisplay = document.getElementById("score-display");
+
+    function moveButtonRandomly() {
+      const x = Math.random() * (window.innerWidth - 100);
+      const y = Math.random() * (window.innerHeight - 50);
+      randomButton.style.left = `${x}px`;
+      randomButton.style.top = `${y}px`;
+    }
+
+    function spawnRandomButton() {
+      randomButton.style.display = "block";
+      moveButtonRandomly();
+      setInterval(moveButtonRandomly, 1000);
+    }
+
+    randomButton.addEventListener("click", () => {
+      popupImage.classList.add("show");
+      score++;
+      scoreDisplay.textContent = `Score: ${score}`;
+
+      setTimeout(() => {
+        popupImage.classList.remove("show");
+      }, 2500);
+    });
+
+    document.getElementById("start-button").addEventListener("click", async () => {
+      document.getElementById("start-screen").style.display = "none";
+      document.querySelector(".marquee").style.display = "block";
+      createPlayers();
+      spawnRandomButton();
+
+      const body = document.body;
+      if (body.requestFullscreen) await body.requestFullscreen();
+      else if (body.webkitRequestFullscreen) await body.webkitRequestFullscreen();
+      else if (body.msRequestFullscreen) await body.msRequestFullscreen();
+    });
+document.getElementById("start-button").addEventListener("click", async () => {
+    document.getElementById("start-screen").style.display = "none";
+    document.querySelector(".marquee").style.display = "block";
+    createPlayers();
+    spawnRandomButton();
+
+    // 啟用背景音樂
+    const music = document.getElementById("background-music");
+    music.src = "https://www.youtube.com/embed/cVGK-owWHR8?autoplay=1&loop=1&playlist=cVGK-owWHR8";
+
+    // 全螢幕模式
+    const body = document.body;
+    if (body.requestFullscreen) await body.requestFullscreen();
+    else if (body.webkitRequestFullscreen) await body.webkitRequestFullscreen();
+    else if (body.msRequestFullscreen) await body.msRequestFullscreen();
+});
+  </script>
+</body>
+</html>

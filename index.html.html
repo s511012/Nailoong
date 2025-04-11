@@ -172,73 +172,81 @@
   <!-- 彈出圖片 -->
   <img id="popup-image" src="https://images.steamusercontent.com/ugc/22062116235882717/18AC03A295BC695F9CB7294D33E02C23566D0FC1/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false">
 
-  <script>
-    const videoId = "liRJpKj8pTc";
-    const numPlayers = 10;
-    const players = [];
+<script>
+  const videoId = "liRJpKj8pTc";
+  const numPlayers = 10;
+  const players = [];
 
-    function createPlayers() {
-      for (let i = 0; i < numPlayers; i++) {
-        const player = document.createElement("iframe");
-        player.className = "player";
-        player.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&controls=0&mute=1&vq=medium`;
-        player.frameBorder = "0";
-        player.allow = "autoplay; encrypted-media";
-        document.body.appendChild(player);
-        players.push(player);
-        randomizeSizeAndPosition(player);
-        setIndependentAnimation(player);
-      }
+  function createPlayers() {
+    for (let i = 0; i < numPlayers; i++) {
+      const player = document.createElement("iframe");
+      player.className = "player";
+      player.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&controls=0&mute=1&vq=medium`;
+      player.frameBorder = "0";
+      player.allow = "autoplay; encrypted-media";
+      document.body.appendChild(player);
+      players.push(player);
+      randomizeSizeAndPosition(player);
+      setIndependentAnimation(player);
     }
+  }
 
-    function randomizeSizeAndPosition(player) {
-      const width = Math.floor(Math.random() * 300) + 200;
-      const height = Math.floor(width * 9 / 16);
-      player.style.width = `${width}px`;
-      player.style.height = `${height}px`;
-      const x = Math.random() * (window.innerWidth - width);
-      const y = Math.random() * (window.innerHeight - height);
-      player.style.transform = `translate(${x}px, ${y}px)`;
-    }
+  function randomizeSizeAndPosition(player) {
+    const width = Math.floor(Math.random() * 300) + 200;
+    const height = Math.floor(width * 9 / 16);
+    player.style.width = `${width}px`;
+    player.style.height = `${height}px`;
+    const x = Math.random() * (window.innerWidth - width);
+    const y = Math.random() * (window.innerHeight - height);
+    player.style.transform = `translate(${x}px, ${y}px)`;
+  }
 
-    function setIndependentAnimation(player) {
-      const interval = Math.floor(Math.random() * 3000) + 2000;
-      setInterval(() => {
-        randomizeSizeAndPosition(player);
-      }, interval);
-    }
+  function setIndependentAnimation(player) {
+    const interval = Math.floor(Math.random() * 3000) + 2000;
+    setInterval(() => {
+      randomizeSizeAndPosition(player);
+    }, interval);
+  }
 
-    // Start 按鈕事件
-    document.getElementById("start-button").addEventListener("click", async () => {
-      document.getElementById("start-screen").style.display = "none";
-      document.querySelector(".marquee").style.display = "block";
-      createPlayers();
-      spawnRandomButton();
+  // Start 按鈕事件
+  document.getElementById("start-button").addEventListener("click", async () => {
+    document.getElementById("start-screen").style.display = "none";
+    document.querySelector(".marquee").style.display = "block";
+    createPlayers();
+    spawnRandomButton();
 
-      const body = document.body;
-      if (body.requestFullscreen) await body.requestFullscreen();
-      else if (body.webkitRequestFullscreen) await body.webkitRequestFullscreen();
-      else if (body.msRequestFullscreen) await body.msRequestFullscreen();
-    });
+    const body = document.body;
+    if (body.requestFullscreen) await body.requestFullscreen();
+    else if (body.webkitRequestFullscreen) await body.webkitRequestFullscreen();
+    else if (body.msRequestFullscreen) await body.msRequestFullscreen();
+  });
 
-    // 隨機生成按鈕
-    function spawnRandomButton() {
-      const btn = document.getElementById("random-button");
-      const delay = Math.floor(Math.random() * 5000) + 2000;
-      setTimeout(() => {
-        const x = Math.random() * (window.innerWidth - 100);
-        const y = Math.random() * (window.innerHeight - 50);
-        btn.style.left = `${x}px`;
-        btn.style.top = `${y}px`;
-        btn.style.display = "block";
-      }, delay);
-    }
+  const randomButton = document.getElementById("random-button");
+  const popupImage = document.getElementById("popup-image");
 
-    // 點擊按鈕顯示圖片
-    document.getElementById("random-button").addEventListener("click", () => {
-      const img = document.getElementById("popup-image");
-      img.classList.add("show");
-    });
-  </script>
+  // 每幾秒重新移動按鈕
+  function moveButtonRandomly() {
+    const x = Math.random() * (window.innerWidth - 100);
+    const y = Math.random() * (window.innerHeight - 50);
+    randomButton.style.left = `${x}px`;
+    randomButton.style.top = `${y}px`;
+  }
+
+  // 出現按鈕
+  function spawnRandomButton() {
+    moveButtonRandomly();
+    randomButton.style.display = "block";
+    setInterval(moveButtonRandomly, 1000); // 每秒移動一次
+  }
+
+  // 點擊按鈕事件
+  randomButton.addEventListener("click", () => {
+    popupImage.classList.add("show");
+
+    setTimeout(() => {
+      popupImage.classList.remove("show");
+    }, 2500); // 2.5 秒後隱藏圖片
+  });
+</script>
 </body>
 </html>
